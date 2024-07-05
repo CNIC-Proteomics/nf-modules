@@ -17,16 +17,35 @@ import org.yaml.snakeyaml.Yaml
 ========================================================================================
 */
 
+// Function to check if at least one element of a list exists in a JSON object
+def checkIfAnyParamExist(params, required_params) {
+    for (param in required_params) {
+        if (params.containsKey(param)) {
+            return true
+        }
+    }
+    return false
+}
 
 // Define a function to check which parameters are missing
 def getMissingParams(params, required_params) {
     def missingParams = []
     // Iterate over each parameter in the list
-    for (param in required_params) {
-        // Check if the parameter exists in the params
-        if (!params.containsKey(param)) {
-            // If parameter is missing, add it to the list of missing parameters
-            missingParams.add(param)
+    for (required_param in required_params) {
+        // First, check if required_param is a list
+        if (required_param instanceof List) {
+            // Check if at least one parameter exists
+            if (!checkIfAnyParamExist(params, required_param)) {
+                // If any parameter exists, add all of them to the list of missing parameters
+                missingParams.addAll(required_param)
+            }
+        }
+        else {
+            // Check if the parameter exists in the params
+            if (!params.containsKey(required_param)) {
+                // If parameter is missing, add it to the list of missing parameters
+                missingParams.add(required_param)
+            }
         }
     }
     // Return the list of missing parameters
@@ -100,26 +119,26 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
     groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
 
-    // // update the given parameter into the fixed parameter file
-    // def redefinedParams = ['decoy_prefix': params.decoy_prefix]
-    // def updated_params_str = Utils.updateParamsFile(params.fixed_params_file, redefinedParams)
-    // def fixed_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
-
-    // // merge the files that contain both the fixed parametes and the variable parameters
-    // def merged_params_str = Utils.mergeIniFiles(fixed_params_file, params.params_file)
-    // def updated_params_file = Utils.writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
-
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoy_prefix': params.decoy_prefix]
-    def updated_params_str = Utils.updateParamsFile(params.params_file, redefinedParams)
-    def updated_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+    def updated_params_str = Utils.updateParamsFile(params.fixed_params_file, redefinedParams)
+    def fixed_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+
+    // merge the files that contain both the fixed parametes and the variable parameters
+    def merged_params_str = Utils.mergeIniFiles(fixed_params_file, params.params_file)
+    def updated_params_file = Utils.writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
+
+    // // update the given parameter into the fixed parameter file
+    // def redefinedParams = ['decoy_prefix': params.decoy_prefix]
+    // def updated_params_str = Utils.updateParamsFile(params.params_file, redefinedParams)
+    // def updated_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
     // create channel for params file
+    // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
     params_file = Channel.value("${updated_params_file}")
 
 
     emit:
-    ch_re_files         = re_files
     ch_exp_table        = exp_table
     ch_database         = database
     ch_sitelist_file    = sitelist_file
@@ -131,11 +150,18 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_1 {
     main:
 
     // stop from the missing parameters
-    def requiredParams = ['re_files','exp_table','database','decoy_prefix']
+    def requiredParams = [['refmod_files','recom_files'],'exp_table','database','decoy_prefix']
     printErrorMissingParams(params, requiredParams)
 
-    // create channels from input files
-    re_files        = Channel.fromPath("${params.re_files}", checkIfExists: true)
+    // create channels from input files. By default, msfragger
+    def fixed_method_params_file = params.fixed_msfragger_params_file
+    if ( params.containsKey('refmod_files') ) {
+        re_files = Channel.fromPath("${params.refmod_files}", checkIfExists: true)
+        fixed_method_params_file = params.fixed_msfragger_params_file
+    } else if ( params.containsKey('recom_files') ) {
+        re_files = Channel.fromPath("${params.recom_files}", checkIfExists: true)
+        fixed_method_params_file = params.fixed_comet_params_file
+    }    
     exp_table       = Channel.fromPath("${params.exp_table}", checkIfExists: true)
     database        = Channel.fromPath("${params.database}", checkIfExists: true)
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
@@ -143,8 +169,17 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_1 {
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoy_prefix': params.decoy_prefix]
-    def updated_params_str = Utils.updateParamsFile(params.params_file, redefinedParams)
-    def updated_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+    def updated_params_str = Utils.updateParamsFile(fixed_method_params_file, redefinedParams)
+    def fixed_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+
+    // merge the files that contain both the fixed parametes and the variable parameters
+    def merged_params_str = Utils.mergeIniFiles(fixed_params_file, params.params_file)
+    def updated_params_file = Utils.writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
+
+    // // update the given parameter into the fixed parameter file
+    // def redefinedParams = ['decoy_prefix': params.decoy_prefix]
+    // def updated_params_str = Utils.updateParamsFile(params.params_file, redefinedParams)
+    // def updated_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
