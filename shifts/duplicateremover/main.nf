@@ -5,6 +5,7 @@ process DUPLICATE_REMOVER {
     input:
     val  order
     path input_file
+    val  params_file
 
     output:
     path "${input_file.baseName}_Unique.feather", emit: ofile
@@ -12,6 +13,7 @@ process DUPLICATE_REMOVER {
 
     script:
     """
-    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/DuplicateRemover.py -i "${input_file}" -s scan -n num -x xcorr_corr -p sp_score
+    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/DuplicateRemover_v2.py -i "${input_file}" -c "${params_file}"
     """
+
 }
