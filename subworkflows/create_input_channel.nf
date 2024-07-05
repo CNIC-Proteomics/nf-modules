@@ -120,7 +120,7 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
     groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
 
     // update the given parameter into the fixed parameter file
-    def redefinedParams = ['decoy_prefix': params.decoy_prefix]
+    def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
     def updated_params_str = Utils.updateParamsFile(params.fixed_params_file, redefinedParams)
     def fixed_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
@@ -168,7 +168,7 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_1 {
     groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
 
     // update the given parameter into the fixed parameter file
-    def redefinedParams = ['decoy_prefix': params.decoy_prefix]
+    def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
     def updated_params_str = Utils.updateParamsFile(fixed_method_params_file, redefinedParams)
     def fixed_params_file = Utils.writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
