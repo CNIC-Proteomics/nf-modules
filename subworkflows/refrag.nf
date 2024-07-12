@@ -46,9 +46,18 @@ workflow CREATE_INPUT_CHANNEL_REFRAG {
     } else { exit 1, "ERROR: The 'dm_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
-    def redefinedParams = ['decoy_prefix': params.decoy_prefix]
-    def updated_params_str = updateParamsFile(params.params_file, redefinedParams)
-    def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+    def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
+    def updated_params_str = updateParamsFile(params.fixed_params_file, redefinedParams)
+    def fixed_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+
+    // merge the files that contain both the fixed parametes and the variable parameters
+    def merged_params_str = mergeIniFiles(fixed_params_file, params.params_file)
+    def updated_params_file = writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
+
+    // // update the given parameter into the fixed parameter file
+    // def redefinedParams = ['decoy_prefix': params.decoy_prefix]
+    // def updated_params_str = updateParamsFile(params.params_file, redefinedParams)
+    // def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
