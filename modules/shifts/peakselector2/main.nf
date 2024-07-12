@@ -1,4 +1,4 @@
-process PEAK_SELECTOR {
+process PEAK_SELECTOR_2 {
     tag "${order}"
     label 'process_medium'
 
