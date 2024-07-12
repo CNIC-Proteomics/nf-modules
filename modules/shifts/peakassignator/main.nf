@@ -1,3 +1,7 @@
+include {
+    extractParamSection
+} from '../../../lib/Utils'
+
 process PEAK_ASSIGNATOR {
     tag "${order}"
     label 'process_medium'
@@ -16,11 +20,11 @@ process PEAK_ASSIGNATOR {
 
     script:
     // extract the parameter section and create a new parameter file
-    def params_str = Utils.extractParamSection(params_file, params_sections)
+    def params_str = extractParamSection(params_file, params_sections)
     params_str = params_str.replaceAll(/\[PeakAssignator_[^\]]*\]/, '[PeakAssignator]')
 
     // create a new parameter file
-    // def re_params_file = Utils.writeStrIntoFile(params_str, "peak_assignator_params.ini")
+    // def re_params_file = writeStrIntoFile(params_str, "peak_assignator_params.ini")
     def re_params_file = "peak_assignator_params.ini"
 
     // get the input extension that will be used for output extension
