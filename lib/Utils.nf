@@ -20,6 +20,36 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 */
 
 //
+// Define a function to check if a path is absolute
+//
+boolean isAbsolutePath(String path) {
+    return new File(path).isAbsolute()
+}
+
+//
+// Define a function to convert a relative path to an absolute path
+//
+String toAbsolutePath(String path) {
+    return new File(path).absolutePath
+}
+
+//
+// Retrieves the name file without extension
+//
+def getBaseName(filePath) {
+    def basename = new File(filePath).getBaseName()
+    return basename
+}
+
+//
+// Get the method name
+//
+def getCurrentMethodName(){
+    def marker = new Throwable()
+    return StackTraceUtils.sanitize(marker).stackTrace[1].methodName
+}
+
+//
 // Function to check if at least one element of a list exists in a JSON object
 //
 def checkIfAnyParamExist(params, required_params) {
@@ -99,30 +129,21 @@ def joinChannelsFromFilename(ifiles1, ifiles2) {
 }
 
 //
-// Retrieves the name file without extension
-//
-def getBaseName(String filePath) {
-    def basename = new File(filePath).getBaseName()
-    return basename
-}
-
-//
-// Get the method name
-//
-def getCurrentMethodName(){
-    def marker = new Throwable()
-    return StackTraceUtils.sanitize(marker).stackTrace[1].methodName
-}
-
-//
 // Print file from the given string
 //
 def writeStrIntoFile(content, ifile) {
     // declare variable
     def ofile = ''
     try {
-        ofile = new File(ifile)
-        ofile.write(content)
+        def of = new File(ifile)
+        of.write(content)
+        def of_str = of.getPath()
+        // check if the paths are absolute or relative and convert if necessary
+        if (!isAbsolutePath(of_str)) {
+            ofile = toAbsolutePath(of_str)
+        } else {
+            ofile = of_str
+        }
     } catch(Exception ex) {
         println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
         System.exit(1)
