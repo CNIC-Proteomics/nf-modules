@@ -13,6 +13,7 @@ import org.yaml.snakeyaml.Yaml
 
 include {
     printErrorMissingParams;
+    getAbsolutePath;
     updateParamsFile;
     writeStrIntoFile
 } from '../lib/Utils'
@@ -36,7 +37,7 @@ workflow CREATE_INPUT_CHANNEL_SEARCH_ENGINE {
     database = Channel.fromPath("${params.database}", checkIfExists: true)
 
     // update the given parameter into the fixed parameter file
-    def redefinedParams = ['database_name': params.database, 'decoy_prefix': params.decoy_prefix, 'output_format': params.msf_output_format, 'num_threads': 0]
+    def redefinedParams = ['database_name': getAbsolutePath("${params.database}"), 'decoy_prefix': params.decoy_prefix, 'output_format': params.msf_output_format, 'num_threads': 0]
     def updated_params_str = updateParamsFile(params.msf_params_file, redefinedParams)
     def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/msfragger.params")
 

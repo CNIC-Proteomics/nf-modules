@@ -34,6 +34,33 @@ String toAbsolutePath(String path) {
 }
 
 //
+// Get path of a file with the absolute path
+//
+String getAbsolutePath(path) {
+    def ofile = ''
+    try {
+        def path_str = ''
+        // convert to string if given variable is a File
+        if (path instanceof File) {
+            path_str = path.getPath()
+        } else {
+            path_str = path
+        }
+        // check if the paths are absolute or relative and convert if necessary
+        if (!isAbsolutePath(path_str)) {
+            ofile = toAbsolutePath(path_str)
+        } else {
+            ofile = path_str
+        }
+    } catch(Exception ex) {
+        println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
+        System.exit(1)
+    }
+    return ofile
+}
+        
+
+//
 // Retrieves the name file without extension
 //
 def getBaseName(filePath) {
@@ -137,13 +164,8 @@ def writeStrIntoFile(content, ifile) {
     try {
         def of = new File(ifile)
         of.write(content)
-        def of_str = of.getPath()
         // check if the paths are absolute or relative and convert if necessary
-        if (!isAbsolutePath(of_str)) {
-            ofile = toAbsolutePath(of_str)
-        } else {
-            ofile = of_str
-        }
+        ofile = getAbsolutePath(of)
     } catch(Exception ex) {
         println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
         System.exit(1)
