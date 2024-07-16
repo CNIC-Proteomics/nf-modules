@@ -36,18 +36,9 @@ workflow CREATE_INPUT_CHANNEL_SEARCH_ENGINE {
     database = Channel.fromPath("${params.database}", checkIfExists: true)
 
     // update the given parameter into the fixed parameter file
-    def redefinedParams = ['database_name': params.database, 'decoy_prefix': params.decoy_prefix, 'output_format': params.msf_output_format]
+    def redefinedParams = ['database_name': params.database, 'decoy_prefix': params.decoy_prefix, 'output_format': params.msf_output_format, 'num_threads': 0]
     def updated_params_str = updateParamsFile(params.msf_params_file, redefinedParams)
-    def fixed_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/msfragger.params")
-
-    // merge the files that contain both the fixed parametes and the variable parameters
-    def merged_params_str = mergeIniFiles(fixed_params_file, params.params_file)
-    def updated_params_file = writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
-
-    // // update the given parameter into the fixed parameter file
-    // def redefinedParams = ['database_name': params.database, 'decoy_prefix': params.decoy_prefix, 'output_format': params.msf_output_format]
-    // def updated_params_str = updateParamsFile(params.msf_params_file, redefinedParams)
-    // def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/msfragger.params")
+    def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/msfragger.params")
 
     // create channel for params file
     msf_param_file = Channel.value("${updated_params_file}")
