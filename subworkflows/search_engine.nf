@@ -46,14 +46,14 @@ workflow CREATE_INPUT_CHANNEL_SEARCH_ENGINE {
 
     // create channels from input files
     // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
-    File file = new File("${params.reporter_ion_isotopic}")
+    def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+    File file = new File(reporter_ion_isotopic_str)
     if ( file.exists() ) {
-        reporter_ion_isotopic = Channel.value("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic = Channel.value(reporter_ion_isotopic_str)
     }
     else {
         exit 1, "ERROR: The 'reporter_ion_isotopic' file does not exist"
     }
-
 
     emit:
     ch_raws                   = raw_files
@@ -117,9 +117,10 @@ workflow CREATE_INPUT_CHANNEL_MZEXTRACTOR {
 
     // create channels from input files
     // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
-    File file = new File("${params.reporter_ion_isotopic}")
+    def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+    File file = new File(reporter_ion_isotopic_str)
     if ( file.exists() ) {
-        reporter_ion_isotopic = Channel.value("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic = Channel.value(reporter_ion_isotopic_str)
     }
     else {
         exit 1, "ERROR: The 'reporter_ion_isotopic' file does not exist"
