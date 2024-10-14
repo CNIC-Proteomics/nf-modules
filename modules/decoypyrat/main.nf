@@ -10,9 +10,9 @@ process DECOY_PY_RAT {
 
     output:
     path("*.target-decoy.fasta", emit: ofile)
-    path("*.target.fasta", emit: ofile_target)
-    path("*.decoy.fasta", emit: ofile_decoy)
-    path("*.log", emit: log)
+    path("*.target.fasta", emit: ofile_target, optional: true)
+    path("*.decoy.fasta", emit: ofile_decoy, optional: true)
+    path("*.log", emit: log, optional: true)
 
     script:
     // define files
@@ -22,20 +22,18 @@ process DECOY_PY_RAT {
     def db_target_decoy = "${input_file.baseName}.target-decoy.fasta"
 
     // depeding on the parameter...
-    if ( params.add_decoys ) {
+    if ( add_decoys ) {
         // obtain the decoys and targets (make sequence isobaric, replace 'I' to 'L')
         // concatenate targets and decoys
         """
         source ${BIODATAHUB_HOME}/env/bin/activate && python ${BIODATAHUB_HOME}/src/decoyPYrat.v2.py  --output_fasta "${db_decoy}"  --decoy_prefix=${decoy_prefix} "${input_file}" > "${log_file}" 2>&1
         cat "${db_target}" "${db_decoy}" > "${db_target_decoy}"
         """
-        // mv "${input_file.getParent()}/${db_target}"  .
-
     }
     else {
         // copy the original database
         """
-        cp "${input_file}" 
+        cp "${input_file}" "${db_target_decoy}"
         """
     }
 
