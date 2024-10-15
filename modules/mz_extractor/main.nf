@@ -13,7 +13,7 @@ process MZ_EXTRACTOR {
 
     script:
     // define log file
-    def log_file ="${task.process.tokenize(':')[-1].toLowerCase()}.log"
+    def log_file ="${ident_file.baseName}.log"
 
     """
     source ${MZEXTRACTOR_HOME}/env/bin/activate && python ${MZEXTRACTOR_HOME}/mz_extractor.py -i "${ident_file}" -z "${mz_file}" -r "${ion_file}" -o "." > "${log_file}" 2>&1
