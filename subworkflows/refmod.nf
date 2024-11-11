@@ -26,7 +26,7 @@ include {
 ========================================================================================
 */
 
-workflow CREATE_INPUT_CHANNEL_REFRAG {
+workflow CREATE_INPUT_CHANNEL_REFMOD {
     main:
 
     // stop from the missing parameters
