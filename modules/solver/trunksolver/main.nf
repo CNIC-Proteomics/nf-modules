@@ -6,7 +6,7 @@ process TRUNK_SOLVER {
     val  order
     path input_file
     path database
-    val  params_file
+    path params_file
 
     output:
     path "${input_file.baseName}_TS.txt", emit: ofile
@@ -14,6 +14,6 @@ process TRUNK_SOLVER {
 
     script:
     """
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/TrunkSolver_V3.py -i "${input_file}" -f "${database}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/TrunkSolver.py -i "${input_file}" -f "${database}" -c "${params_file}"
     """
 }

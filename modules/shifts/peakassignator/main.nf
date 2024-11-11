@@ -10,7 +10,7 @@ process PEAK_ASSIGNATOR {
     val  order
     path input_file
     path input_file2
-    val  params_file
+    val  params_file // important! the file path is given as a value
     val  params_sections
 
     output:
@@ -34,6 +34,6 @@ process PEAK_ASSIGNATOR {
     # create the new parameter file
     echo "${params_str}" > "${re_params_file}"
 
-    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakAssignator_v2.py -i "${input_file}" -a "${input_file2}" -c "${re_params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakAssignator.py -i "${input_file}" -a "${input_file2}" -c "${re_params_file}"
     """
 }

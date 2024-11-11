@@ -12,7 +12,7 @@ process ADAPTER {
 
     script:
     """
-    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/SHIFTSadapter_v2.py -i "${input_file}" -o "."
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/SHIFTSadapter.py -i "${input_file}" -o "."
     """
     // """
     // source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/SHIFTSadapter.py -i "${input_file}"

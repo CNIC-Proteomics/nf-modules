@@ -14,6 +14,6 @@ process SITE_SOLVER {
 
     script:
     """
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/SiteSolver_V2.py -i "${input_file}" -pl "${sitelist_file}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/SiteSolver.py -i "${input_file}" -pl "${sitelist_file}" -c "${params_file}"
     """
 }

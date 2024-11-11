@@ -2,6 +2,8 @@ process PDMTABLE_MAKER {
     tag "${order}"
     label 'process_medium'
 
+    time '48.h'
+
     input:
     val  order
     path input_file
@@ -20,6 +22,6 @@ process PDMTABLE_MAKER {
     # create the input file with the path of files
     echo "${input_file}" > "${re_input_file}"
 
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/PDMTableMaker_V7.py -i "${re_input_file}" -f "${database}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/PDMTableMaker.py -i "${re_input_file}" -f "${database}" -c "${params_file}"
     """
 }

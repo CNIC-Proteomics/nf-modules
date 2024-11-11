@@ -5,8 +5,9 @@ process PEAK_FDRER {
     input:
     val  order
     path input_file
+    path apexlist_file
     path exp_table
-    val  params_file
+    path params_file
 
     output:
     path "${input_file.baseName}_FDRfiltered.tsv", emit: oFDRfiltered
@@ -15,6 +16,6 @@ process PEAK_FDRER {
 
     script:
     """
-    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakFDRer.py -i "${input_file}" -e "${exp_table}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakFDRer.py -i "${input_file}" -a "${apexlist_file}" -e "${exp_table}" -c "${params_file}"
     """
 }
