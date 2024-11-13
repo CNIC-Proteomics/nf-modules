@@ -14,6 +14,7 @@ import org.yaml.snakeyaml.Yaml
 include {
     printErrorMissingParams;
     joinChannelsFromFilename;
+    joinChannelsFromPrefix;
     updateParamsFile;
     writeStrIntoFile;
     mergeIniFiles
@@ -27,6 +28,47 @@ include {
 */
 
 workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
+    main:
+
+    // stop from the missing parameters
+    def requiredParams = ['msf_files','exp_table','database','sitelist_file','groupmaker_file','decoy_prefix']
+    printErrorMissingParams(params, requiredParams)
+
+    // create channels from input files
+    msf_files = Channel.fromPath("${params.msf_files}", checkIfExists: true)
+
+    // create channels from input files
+    exp_table       = Channel.fromPath("${params.exp_table}", checkIfExists: true)
+    database        = Channel.fromPath("${params.database}", checkIfExists: true)
+    sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
+    groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
+    peak_file       = file("${params.peak_file}", checkIfExists: true)
+
+    // update the given parameter into the fixed parameter file
+    def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
+    def updated_params_str = updateParamsFile(params.fixed_msfragger_params_file, redefinedParams)
+    def fixed_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+
+    // merge the files that contain both the fixed parametes and the variable parameters
+    def merged_params_str = mergeIniFiles(fixed_params_file, params.params_file)
+    def updated_params_file = writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
+
+    // create channel for params file
+    // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
+    params_file = Channel.value("${updated_params_file}")
+
+
+    emit:
+    ch_msf_files        = msf_files
+    ch_exp_table        = exp_table
+    ch_database         = database
+    ch_sitelist_file    = sitelist_file
+    ch_groupmaker_file  = groupmaker_file
+    ch_peak_file        = peak_file
+    ch_params_file      = params_file
+}
+
+workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     main:
 
     // stop from the missing parameters
@@ -53,17 +95,12 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
-    def updated_params_str = updateParamsFile(params.fixed_params_file, redefinedParams)
+    def updated_params_str = updateParamsFile(params.fixed_msfragger_params_file, redefinedParams)
     def fixed_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
     // merge the files that contain both the fixed parametes and the variable parameters
     def merged_params_str = mergeIniFiles(fixed_params_file, params.params_file)
     def updated_params_file = writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
-
-    // // update the given parameter into the fixed parameter file
-    // def redefinedParams = ['decoy_prefix': params.decoy_prefix]
-    // def updated_params_str = updateParamsFile(params.params_file, redefinedParams)
-    // def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
@@ -71,6 +108,8 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
 
 
     emit:
+    ch_msf_raw_files    = msf_raw_files
+    ch_dm_file          = dm_file
     ch_exp_table        = exp_table
     ch_database         = database
     ch_sitelist_file    = sitelist_file
@@ -78,7 +117,7 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
     ch_params_file      = params_file
 }
 
-workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_1 {
+workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_RECOM {
     main:
 
     // stop from the missing parameters
@@ -107,11 +146,6 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_1 {
     // merge the files that contain both the fixed parametes and the variable parameters
     def merged_params_str = mergeIniFiles(fixed_params_file, params.params_file)
     def updated_params_file = writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
-
-    // // update the given parameter into the fixed parameter file
-    // def redefinedParams = ['decoy_prefix': params.decoy_prefix]
-    // def updated_params_str = updateParamsFile(params.params_file, redefinedParams)
-    // def updated_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
 
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists

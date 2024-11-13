@@ -34,6 +34,6 @@ process PROTEIN_ASSIGNER {
     # create the new parameter file
     echo "${params_str}" > "${re_params_file}"
 
-    source ${PROTEIN_ASSIGNER_HOME}/env/bin/activate && python ${PROTEIN_ASSIGNER_HOME}/ProteinAssigner_v5.py -i "${input_file}" -f "${database}" -o "${output_file}" -c "${re_params_file}" &> "${log_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${PTMTOOLS_HOME}/ProteinAssigner.py -i "${input_file}" -f "${database}" -o "${output_file}" -c "${re_params_file}" &> "${log_file}"
     """
 }

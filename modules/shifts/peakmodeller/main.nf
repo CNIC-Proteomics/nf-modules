@@ -5,15 +5,22 @@ process PEAK_MODELLER {
     input:
     val  order
     path input_file
-    val  params_file
+    path params_file
 
     output:
-    path "PeakModeller_DMTable.feather", emit: oDMtable
-    path "PeakModeller_DMHistogram.tsv", emit: oHistogram
+    path "DMTable.feather", emit: oDMtable
+    path "DMHistogram.tsv", emit: oHistogram
+
+    path "DMTable_target.feather", emit: oDMtableTarget, optional: true
+    path "DMHistogram_target.tsv", emit: oHistogramTarget, optional: true
+    path "DMTable_decoy.feather", emit: oDMtableDecoy, optional: true
+    path "DMHistogram_decoy.tsv", emit: oHistogramDecoy, optional: true
+    path "target_decoy.html", emit: oPlot, optional: true
+
     path "*_log.txt", emit: log
 
     script:
     """
-    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakModeller.py -i "*_Unique_calibrated.feather" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakModeller.py -w "${task.cpus}" -i "*_Unique_calibrated.feather" -c "${params_file}"
     """
 }

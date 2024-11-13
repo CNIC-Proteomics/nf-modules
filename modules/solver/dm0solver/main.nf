@@ -18,7 +18,6 @@ process DM0SOLVER {
     path "*_log.txt", emit: log
 
     script:
-
     // extract the parameter section and create a new parameter file
     def params_str = extractParamSection(params_file, params_sections)
     params_str = params_str.replaceAll(/\[DM0Solver_Parameters_[^\]]*\]/, '[DM0Solver_Parameters]')
@@ -30,6 +29,6 @@ process DM0SOLVER {
     # create the new parameter file
     echo "${params_str}" > "${re_params_file}"
 
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/DM0SOlver_V2.py -i "${input_file}" -a "${input_file2}" -c "${re_params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/DM0Solver.py -i "${input_file}" -a "${input_file2}" -c "${re_params_file}"
     """
 }

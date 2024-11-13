@@ -14,6 +14,6 @@ process GROUP_MAKER {
 
     script:
     """
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/GroupMaker.py -i "${input_file}" -u "${groupmaker_file}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/GroupMaker.py -i "${input_file}" -u "${groupmaker_file}" -c "${params_file}"
     """
 }

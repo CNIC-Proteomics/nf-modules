@@ -155,6 +155,80 @@ def joinChannelsFromFilename(ifiles1, ifiles2) {
     return files3
 }
 
+
+//
+// Joins two channels based on file name prefix matching
+// Return A channel containing tuples of paired files where one file name starts with the prefix of the other.
+//
+def joinChannelsFromPrefix(ifiles1, ifiles2) {
+
+    // create a list of tuples with the base name (prefix) and the file itself for ifiles1.
+    def files1 = ifiles1
+                    .map { file -> tuple(file.baseName, file) }
+
+    // create a list of tuples with the base name (prefix) and the file itself for ifiles2.
+    def files2 = ifiles2
+                    .map { file -> tuple(file.baseName, file) }
+
+    // join channels based on prefix matching.
+    def files3 = files1
+                    .flatMap { prefix1, f1 -> 
+                        files2
+                            .filter { prefix2, f2 -> 
+                                f1.name.startsWith(prefix2) || f2.name.startsWith(prefix1)
+                            }
+                            .map { prefix2, f2 -> [f1, f2] }
+                    }
+    // def files3 = files1
+    //             .flatMap { prefix1, f1 -> 
+    //                 files2List
+    //                     .findAll { prefix2, f2 -> 
+    //                         f1.name.startsWith(prefix2) || f2.name.startsWith(prefix1)
+    //                     }
+    //                     .collect { prefix2, f2 -> [prefix1, f1, f2] }
+    //             }
+                // .view { "Joined Pair: ${it[1].name}, ${it[2].name}" }
+                .view()
+
+    return files3
+}
+
+// //
+// // Join two channels based on the prefix of filenames (up to the last underscore)
+// //
+// def joinChannelsFromPrefix(ifiles1, ifiles2) {
+
+//     // create a list of tuples with the prefix and the file
+//     def files1 = ifiles1
+//                     .map { file ->
+//                         def baseName = file.baseName
+//                         def prefix = baseName.substring(0, baseName.lastIndexOf('_'))
+//                         tuple(prefix, file)
+//                     }
+//                     .view()
+//                     // .set { files1 }
+
+
+//     // create a list of tuples with the prefix and the file
+//     def files2 = ifiles2
+//                     .map { file ->
+//                         def baseName = file.baseName
+//                         def prefix = baseName.substring(0, baseName.lastIndexOf('_'))
+//                         tuple(prefix, file)
+//                     }
+//                     .view()
+//                     // .set { files2 }
+
+//     // join both channels based on the extracted prefix
+//     def files3 = files1
+//                     .join(files2)
+//                     .map { prefix, f1, f2 -> [f1, f2] }
+//                     .view { "value: $it" }
+//                     // .set { files3 }
+
+//     return files3
+// }
+
 //
 // Print file from the given string
 //
@@ -317,6 +391,21 @@ def mergeIniFiles(ifile1, ifile2) {
         System.exit(1)
     }
     return params_str
+}
+
+//
+// Define the functions to update parameters and merge INI files.
+// Return the final updated params file path.
+//
+def updateParams(params, params_file) {
+    def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
+    def updated_params_str = updateParamsFile(params.fixed_params_file, redefinedParams)
+    def fixed_params_file = writeStrIntoFile(updated_params_str, "${params.paramdir}/params.ini")
+
+    def merged_params_str = mergeIniFiles(fixed_params_file, params_file)
+    def updated_params_file = writeStrIntoFile(merged_params_str, "${params.paramdir}/params.ini")
+
+    return updated_params_file
 }
 
 

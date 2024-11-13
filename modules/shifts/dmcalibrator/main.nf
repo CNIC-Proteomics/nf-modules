@@ -5,7 +5,7 @@ process DM_CALIBRATOR {
     input:
     val  order
     path input_file
-    val  params_file
+    path params_file
 
     output:
     path "${input_file.baseName}_calibrated.feather", emit: ofile
@@ -13,7 +13,7 @@ process DM_CALIBRATOR {
 
     script:
     """
-    source ${SHIFTS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/DMcalibrator.py -i "${input_file}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/DMcalibrator.py -i "${input_file}" -c "${params_file}"
     """
 
 }

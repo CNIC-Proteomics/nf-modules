@@ -13,6 +13,6 @@ process JOINER {
 
     script:
     """
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/Joiner_V2.py -i "${input_file}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/Joiner.py -i "${input_file}" -c "${params_file}"
     """
 }

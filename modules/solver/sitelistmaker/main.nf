@@ -5,7 +5,7 @@ process SITELIST_MAKER {
     input:
     val  order
     path input_file
-    val  params_file
+    path params_file
 
     output:
     path "${input_file.baseName}_Frequency_Table.txt", emit: oFrequency
@@ -15,6 +15,6 @@ process SITELIST_MAKER {
 
     script:
     """
-    source ${SOLVER_HOME}/env/bin/activate && python ${SOLVER_HOME}/SiteListMaker.py -i "${input_file}" -c "${params_file}"
+    source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/SiteListMaker.py -i "${input_file}" -c "${params_file}"
     """
 }
