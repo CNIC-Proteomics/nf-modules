@@ -8,14 +8,14 @@ process MZ_EXTRACTOR {
     path ion_file
 
     output:
-    path("*_quant.tsv", emit: ofile)
-    path("*.log", emit: log)
+    path "output/${ident_file.baseName}.tsv", emit: ofile
+    path "*.log", emit: log
 
     script:
     // define log file
     def log_file ="${ident_file.baseName}.log"
 
     """
-    source ${SEARCHTOOLKIT_HOME}/env/bin/activate && python ${SEARCHTOOLKIT_HOME}/mz_extractor.py -i "${ident_file}" -z "${mz_file}" -r "${ion_file}" -o "." > "${log_file}" 2>&1
+    source ${SEARCHTOOLKIT_HOME}/env/bin/activate && python ${SEARCHTOOLKIT_HOME}/mz_extractor.py -i "${ident_file}" -z "${mz_file}" -r "${ion_file}" -o "output" > "${log_file}" 2>&1
     """
 }
