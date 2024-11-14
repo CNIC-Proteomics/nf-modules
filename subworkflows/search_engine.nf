@@ -108,6 +108,34 @@ workflow CREATE_INPUT_CHANNEL_MSFRAGGER {
     ch_msf_param_file = msf_param_file
 }
 
+workflow CREATE_INPUT_CHANNEL_MSFRAGGERADAPTED {
+    main:
+
+    // stop from the missing parameters
+    def requiredParams = ['mz_files','msf_files','reporter_ion_isotopic']
+    printErrorMissingParams(params, requiredParams)
+
+    // create channels from input files
+    mz_files = Channel.fromPath("${params.mz_files}", checkIfExists: true)
+    msf_files = Channel.fromPath("${params.msf_files}", checkIfExists: true)
+
+    // create channels from input files
+    // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
+    def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+    File file = new File(reporter_ion_isotopic_str)
+    if ( file.exists() ) {
+        reporter_ion_isotopic = Channel.value(reporter_ion_isotopic_str)
+    }
+    else {
+        exit 1, "ERROR: The 'reporter_ion_isotopic' file does not exist"
+    }
+
+    emit:
+    ch_mz_files                 = mz_files
+    ch_msf_files                = msf_files
+    ch_reporter_ion_isotopic    = reporter_ion_isotopic
+}
+
 workflow CREATE_INPUT_CHANNEL_MZEXTRACTOR {
     main:
 
