@@ -12,6 +12,7 @@ process PEAK_FDRER {
     output:
     path "${input_file.baseName}_FDRfiltered.tsv", emit: oFDRfiltered
     path "${input_file.baseName}_FDR.tsv", emit: oFDR
+    path "${input_file.baseName}_peak_frequency.tsv", emit: oPeakFrequency
     path "*_log.txt", emit: log
 
     script:
