@@ -29,10 +29,11 @@ workflow CREATE_INPUT_CHANNEL_SOLVER {
     main:
 
     // stop from the missing parameters
-    def requiredParams = ['peak_fdr','apex_list','database','decoy_prefix']
+    def requiredParams = ['peak_fdr','apex_list','exp_table','database','decoy_prefix']
     printErrorMissingParams(params, requiredParams)
 
     // create channels from input files
+    exp_table       = Channel.fromPath("${params.exp_table}", checkIfExists: true)
     peak_fdr        = Channel.fromPath("${params.peak_fdr}", checkIfExists: true)
     apex_list       = Channel.fromPath("${params.apex_list}", checkIfExists: true)
     database        = Channel.fromPath("${params.database}", checkIfExists: true)
@@ -61,6 +62,7 @@ workflow CREATE_INPUT_CHANNEL_SOLVER {
     ch_peakfdr_file     = peak_fdr
     ch_apexlist_file    = apex_list
     ch_database         = database
+    ch_exp_table        = exp_table
     ch_sitelist_file    = sitelist_file
     ch_groupmaker_file  = groupmaker_file
     ch_params_file      = params_file

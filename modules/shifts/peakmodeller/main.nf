@@ -5,7 +5,7 @@ process PEAK_MODELLER {
     input:
     val  order
     path input_file
-    path params_file
+    val  params_str
 
     output:
     path "DMTable.feather", emit: oDMtable
@@ -20,7 +20,11 @@ process PEAK_MODELLER {
     path "*_log.txt", emit: log
 
     script:
+    // define params file
+    def params_file = "params.ini"
     """
+    # create the new parameter file
+    echo "${params_str}" > "${params_file}"
     source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SHIFTS_HOME}/PeakModeller.py -w "${task.cpus}" -i "*_Unique_calibrated.feather" -c "${params_file}"
     """
 }

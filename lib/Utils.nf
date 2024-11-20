@@ -12,6 +12,9 @@
 import java.io.File
 import org.codehaus.groovy.runtime.StackTraceUtils
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 /*
 ========================================================================================
@@ -19,23 +22,35 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 ========================================================================================
 */
 
-//
-// Define a function to check if a path is absolute
-//
+
+/**
+ * Checks if a path is absolute.
+ *
+ * @param path - The path to check
+ * @return True if the path is absolute, otherwise false
+ */
 boolean isAbsolutePath(String path) {
     return new File(path).isAbsolute()
 }
 
-//
-// Define a function to convert a relative path to an absolute path
-//
+
+/**
+ * Converts a relative path to an absolute path.
+ *
+ * @param path - The relative path to convert
+ * @return The absolute path as a string
+ */
 String toAbsolutePath(String path) {
     return new File(path).absolutePath
 }
 
-//
-// Get path of a file with the absolute path
-//
+
+/**
+ * Retrieves the absolute path of a given file or directory.
+ *
+ * @param path - The input path as a string or File object
+ * @return The absolute path as a string
+ */
 String getAbsolutePath(path) {
     def ofile = ''
     try {
@@ -60,25 +75,36 @@ String getAbsolutePath(path) {
 }
         
 
-//
-// Retrieves the name file without extension
-//
+/**
+ * Retrieves the base name of a file (filename without extension).
+ *
+ * @param filePath - The full path of the file
+ * @return The base name of the file as a string
+ */
 def getBaseName(filePath) {
     def basename = new File(filePath).getBaseName()
     return basename
 }
 
-//
-// Get the method name
-//
+
+/**
+ * Retrieves the current method name.
+ *
+ * @return The name of the method as a string
+ */
 def getCurrentMethodName(){
     def marker = new Throwable()
     return StackTraceUtils.sanitize(marker).stackTrace[1].methodName
 }
 
-//
-// Function to check if at least one element of a list exists in a JSON object
-//
+
+/**
+ * Checks if at least one element of a list exists in a JSON object.
+ *
+ * @param params - The JSON object containing parameters
+ * @param required_params - A list of required parameter names
+ * @return True if at least one parameter exists, otherwise false
+ */
 def checkIfAnyParamExist(params, required_params) {
     for (param in required_params) {
         if (params.containsKey(param)) {
@@ -88,9 +114,14 @@ def checkIfAnyParamExist(params, required_params) {
     return false
 }
 
-//
-// Define a function to check which parameters are missing
-//
+
+/**
+ * Identifies missing parameters from a list of required parameters.
+ *
+ * @param params - The JSON object containing parameters
+ * @param required_params - A list of required parameter names
+ * @return A list of missing parameter names
+ */
 def getMissingParams(params, required_params) {
     def missingParams = []
     // Iterate over each parameter in the list
@@ -115,9 +146,13 @@ def getMissingParams(params, required_params) {
     return missingParams
 }
 
-//
-// Print an error message for the missing parameters
-//
+
+/**
+ * Prints an error message for missing parameters and exits.
+ *
+ * @param params - The JSON object containing parameters
+ * @param required_params - A list of required parameter names
+ */
 def printErrorMissingParams(params, required_params) {
     // check which parameters are missing in the dict
     def missingParams = getMissingParams(params, required_params)
@@ -127,9 +162,14 @@ def printErrorMissingParams(params, required_params) {
     }
 }
 
-//
-// Join two channels based on the file name
-//
+
+/**
+ * Joins two channels based on the file name.
+ *
+ * @param ifiles1 - First input channel
+ * @param ifiles2 - Second input channel
+ * @return A channel containing tuples of paired files
+ */
 def joinChannelsFromFilename(ifiles1, ifiles2) {
 
     // create a list of tuples with the base name and the file name.
@@ -156,10 +196,13 @@ def joinChannelsFromFilename(ifiles1, ifiles2) {
 }
 
 
-//
-// Joins two channels based on file name prefix matching
-// Return A channel containing tuples of paired files where one file name starts with the prefix of the other.
-//
+/**
+ * Joins two channels based on file name prefix matching.
+ *
+ * @param ifiles1 - First input channel
+ * @param ifiles2 - Second input channel
+ * @return A channel containing tuples of paired files
+ */
 def joinChannelsFromPrefix(ifiles1, ifiles2) {
 
     // create a list of tuples with the base name (prefix) and the file itself for ifiles1.
@@ -193,45 +236,41 @@ def joinChannelsFromPrefix(ifiles1, ifiles2) {
     return files3
 }
 
-// //
-// // Join two channels based on the prefix of filenames (up to the last underscore)
-// //
-// def joinChannelsFromPrefix(ifiles1, ifiles2) {
 
-//     // create a list of tuples with the prefix and the file
-//     def files1 = ifiles1
-//                     .map { file ->
-//                         def baseName = file.baseName
-//                         def prefix = baseName.substring(0, baseName.lastIndexOf('_'))
-//                         tuple(prefix, file)
-//                     }
-//                     .view()
-//                     // .set { files1 }
+/**
+ * Copies a file to a folder with the destination file name matching the source file name.
+ *
+ * @param sourcePath - The path to the source file
+ * @param destinationFolderPath - The path to the destination folder
+ * @throws IOException if the file operation fails
+ */
+def copyFileToFolder(sourcePath, destinationFolderPath) {
+    try {
+        Path source = Path.of(sourcePath)
+        Path destinationFolder = Path.of(destinationFolderPath)
+        // ensure the destination folder exists
+        if (!Files.exists(destinationFolder)) {
+            Files.createDirectories(destinationFolder)
+        }
+        // append the source file name to the destination folder path
+        Path destinationFile = destinationFolder.resolve(source.fileName)
+        // copy the file and overwrite if the destination file exists
+        Files.copy(source, destinationFile, StandardCopyOption.REPLACE_EXISTING)
+        // println("File copied from ${sourcePath} to ${destinationFile}")
+    } catch (IOException ex) {
+        println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
+        System.exit(1)
+    }
+}
 
 
-//     // create a list of tuples with the prefix and the file
-//     def files2 = ifiles2
-//                     .map { file ->
-//                         def baseName = file.baseName
-//                         def prefix = baseName.substring(0, baseName.lastIndexOf('_'))
-//                         tuple(prefix, file)
-//                     }
-//                     .view()
-//                     // .set { files2 }
-
-//     // join both channels based on the extracted prefix
-//     def files3 = files1
-//                     .join(files2)
-//                     .map { prefix, f1, f2 -> [f1, f2] }
-//                     .view { "value: $it" }
-//                     // .set { files3 }
-
-//     return files3
-// }
-
-//
-// Print file from the given string
-//
+/**
+ * Writes the given content into a specified file.
+ *
+ * @param content - The string content to write to the file
+ * @param ifile - The path of the file where the content will be written
+ * @return The absolute path of the written file
+ */
 def writeStrIntoFile(content, ifile) {
     // declare variable
     def ofile = ''
@@ -247,9 +286,13 @@ def writeStrIntoFile(content, ifile) {
     return ofile
 }
 
-//
-// Create String in Ini format from report (map of sections: {key,value}
-//
+
+/**
+ * Creates a string in INI format from a report map of sections and key-value pairs.
+ *
+ * @param report - A map where each section is associated with its parameters
+ * @return A formatted string in INI format
+ */
 def createIniStr(report) {
     def result = ''
     try {
@@ -267,9 +310,13 @@ def createIniStr(report) {
     return result
 }
 
-//
-// Create report (list of maps) from an INI file
-//
+
+/**
+ * Parses an INI file and creates a map representing its structure.
+ *
+ * @param ifile - Path to the INI file
+ * @return A map where keys are section names and values are key-value pairs of parameters
+ */
 def parseIniFile(ifile) {
     def result = [:]
     try {
@@ -286,8 +333,10 @@ def parseIniFile(ifile) {
                 // It's a key-value pair (not empty and not a comment)
                 def keyValue = line.split('=').collect { it.split('/(#)/')[0].trim() }
                 if (currentSection) {
+                    def key = keyValue[0]
+                    def val = keyValue[1] ? keyValue[1] : '' // empty if null
                     // Add the key-value pair to the current section
-                    result[currentSection][keyValue[0]] = keyValue[1]
+                    result[currentSection][key] = val
                 }
             }
         }
@@ -298,9 +347,14 @@ def parseIniFile(ifile) {
     return result
 }
 
-//
-// Extract the parameter section from a parameter file (INI)
-//
+
+/**
+ * Extracts specified sections from an INI file and creates a string with their parameters.
+ *
+ * @param ifile - Path to the INI file
+ * @param sections - List of sections to extract
+ * @return A string representing the extracted sections in INI format
+ */
 def extractParamSection(ifile, sections) {
     // declare variable
     def params_str = ''
@@ -326,9 +380,54 @@ def extractParamSection(ifile, sections) {
     return params_str
 }
 
-//
-// Update the parameter file (INI) with the provided parameters
-//
+
+/**
+ * Generates an updated parameter string by extracting specific sections and applying replacements.
+ *
+ * @param ifile - Path to the input parameter file
+ * @param sections - List of sections to extract and update
+ * @param replacements - List of tuples (regex, replacement) for dynamic replacements (optional)
+ * @return A string containing the updated parameters
+ */
+def generateUpdatedParamStr(ifile, sections, replacements = []) {
+    // declare variable
+    def paramsStr = ''
+    try {
+        // extract the parameter section using the existing extractParamSection method
+        paramsStr = extractParamSection(ifile, sections)
+        // apply replacements if provided
+        replacements.each { replacement -> paramsStr = paramsStr.replaceAll(replacement[0], replacement[1]) }
+        // // create a new parameter file
+        // def re_params_file = writeStrIntoFile(paramsStr, reParamsFile)
+    } catch (Exception ex) {
+        println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
+        System.exit(1)
+    }
+    return paramsStr
+}
+
+/**
+ * Generates a parameter string channel based on the given sections, parameter file, and replacements.
+ *
+ * @param paramsFile - Channel representing the parameter file path
+ * @param sections - List of sections to extract from the parameter file
+ * @param replacements - List of tuples (regex, replacement) for dynamic replacements (optional)
+ * @return A channel emitting the updated parameter string
+ */
+def createParamStrChannel(paramsFile, sections, replacements = []) {
+    return paramsFile.map { file ->
+        generateUpdatedParamStr(file, sections, replacements)
+    }
+}
+
+
+/**
+ * Updates an INI file with the provided key-value pairs.
+ *
+ * @param ifile - Path to the input INI file
+ * @param replaces - A map containing key-value pairs to update
+ * @return A string representing the updated parameters
+ */
 def updateParamsFile(ifile, replaces) {
     // declare variable
     def ofile = ''
@@ -355,9 +454,14 @@ def updateParamsFile(ifile, replaces) {
     return content
 }
 
-//
-// Extract the parameter section from a parameter file (INI)
-//
+
+/**
+ * Merges two INI files by combining their sections and parameters.
+ *
+ * @param ifile1 - Path to the first INI file
+ * @param ifile2 - Path to the second INI file
+ * @return A string representing the merged parameters in INI format
+ */
 def mergeIniFiles(ifile1, ifile2) {
     // declare variable
     def params_str = ''
@@ -393,10 +497,14 @@ def mergeIniFiles(ifile1, ifile2) {
     return params_str
 }
 
-//
-// Define the functions to update parameters and merge INI files.
-// Return the final updated params file path.
-//
+
+/**
+ * Updates parameters and merges INI files into a final updated parameter file.
+ *
+ * @param params - A map containing parameters and their values
+ * @param params_file - Path to the additional parameters file
+ * @return Path to the final updated parameters file
+ */
 def updateParams(params, params_file) {
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
     def updated_params_str = updateParamsFile(params.fixed_params_file, redefinedParams)

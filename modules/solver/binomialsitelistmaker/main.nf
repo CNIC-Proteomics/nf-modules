@@ -5,7 +5,7 @@ process BINOMIAL_SITELIST_MAKER {
     input:
     val  order
     path input_file
-    path params_file
+    val  params_str
 
     output:
     path "BinomialSiteListMaker_PEAKS_Output.xlsx", emit: ofile
@@ -14,8 +14,11 @@ process BINOMIAL_SITELIST_MAKER {
     script:
     // define files
     def output_file = "BinomialSiteListMaker_PEAKS_Output.xlsx"
-
+    // define params file
+    def params_file = "params.ini"
     """
+    # create the new parameter file
+    echo "${params_str}" > "${params_file}"
     source ${PTMCOMPASS_HOME}/env/bin/activate && python ${SOLVER_HOME}/BinomialSiteListMaker.py -i "${input_file}" -o "${output_file}" -c "${params_file}"
     """
 }

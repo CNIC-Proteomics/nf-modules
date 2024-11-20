@@ -14,7 +14,7 @@ import org.yaml.snakeyaml.Yaml
 include {
     printErrorMissingParams;
     joinChannelsFromFilename;
-    joinChannelsFromPrefix;
+    copyFileToFolder;
     updateParamsFile;
     writeStrIntoFile;
     mergeIniFiles
@@ -43,6 +43,12 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
     groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
     peak_file       = file("${params.peak_file}", checkIfExists: true)
+
+    // copy input files into params directory
+    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
+    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
@@ -85,6 +91,7 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     File file = new File("${params.dm_file}")
     if ( file.exists() ) {
         dm_file = Channel.value("${params.dm_file}")
+        copyFileToFolder("${params.dm_file}", "${params.paramdir}/")
     } else { exit 1, "ERROR: The 'dm_file' file does not exist" }
 
     // create channels from input files
@@ -92,6 +99,12 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     database        = Channel.fromPath("${params.database}", checkIfExists: true)
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
     groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
+
+    // copy input files into params directory
+    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
+    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
@@ -137,6 +150,12 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_RECOM {
     database        = Channel.fromPath("${params.database}", checkIfExists: true)
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
     groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
+
+    // copy input files into params directory
+    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
+    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
