@@ -3,16 +3,16 @@ process DECOY_PY_RAT {
     label 'process_single'
 
     input:
-    val order
+    val  order
     path input_file
-    val add_decoys
-    val decoy_prefix
+    val  add_decoys
+    val  decoy_prefix
 
     output:
-    path("*.target-decoy.fasta", emit: ofile)
-    path("*.target.fasta", emit: ofile_target, optional: true)
-    path("*.decoy.fasta", emit: ofile_decoy, optional: true)
-    path("*.log", emit: log, optional: true)
+    path "*.target-decoy.fasta", emit: ofile
+    path "*.target.fasta", emit: ofile_target, optional: true
+    path "*.decoy.fasta", emit: ofile_decoy, optional: true
+    path "*.log", emit: log, optional: true
 
     script:
     // define files
@@ -36,7 +36,6 @@ process DECOY_PY_RAT {
         cp "${input_file}" "${db_target_decoy}"
         """
     }
-
 }
 
 

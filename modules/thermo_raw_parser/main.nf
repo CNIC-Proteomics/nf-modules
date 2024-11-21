@@ -3,8 +3,13 @@ process THERMO_RAW_PARSER {
     label 'process_high'
 
     input:
-    val order
+    val  order
     path input_file
+    val  create_mzml
+
+    when:
+    // execute this process depending on the given flag
+    create_mzml ? true : false
 
     output:
     // select the output prefix depending on the given format
@@ -26,8 +31,8 @@ process THERMO_RAW_PARSER {
             prefix = 'mzML'
             break; 
     }
-    path("*.${prefix}", emit: ofile)
-    path("*.log", emit: log)
+    path "*.${prefix}", emit: ofile
+    path "*.log", emit: log, optional: true
 
     script:
     // define files
@@ -36,7 +41,4 @@ process THERMO_RAW_PARSER {
     """
     mono ${THERMORAWFILEPARSER_HOME}/ThermoRawFileParser.exe -i "${input_file}" -f "${params.thermo_parser_format}" > "${log_file}" 2>&1
     """
-
-    // mv "${input_file.getParent()}/${input_file.baseName}.${prefix}" .
-
 }
