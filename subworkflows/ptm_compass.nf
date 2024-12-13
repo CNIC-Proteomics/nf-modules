@@ -39,16 +39,19 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
 
     // create channels from input files
     exp_table       = Channel.fromPath("${params.exp_table}", checkIfExists: true)
-    database        = Channel.fromPath("${params.database}", checkIfExists: true)
+    // database        = Channel.fromPath("${params.database}", checkIfExists: true)
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
-    groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
+    // groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
     peak_file       = file("${params.peak_file}", checkIfExists: true)
-
-    // copy input files into params directory
-    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
-    copyFileToFolder("${params.database}", "${params.paramdir}/")
-    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
-    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
+    // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
+    File file = new File("${params.database}")
+    if ( file.exists() ) {
+        database = Channel.value("${params.database}")
+    } else { exit 1, "ERROR: The 'database' file does not exist" }
+    File file2 = new File("${params.groupmaker_file}")
+    if ( file2.exists() ) {
+        groupmaker_file = Channel.value("${params.groupmaker_file}")
+    } else { exit 1, "ERROR: The 'groupmaker_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
@@ -62,6 +65,12 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
     params_file = Channel.value("${updated_params_file}")
+
+    // copy input files into params directory
+    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
+    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
 
 
     emit:
@@ -91,20 +100,22 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     File file = new File("${params.dm_file}")
     if ( file.exists() ) {
         dm_file = Channel.value("${params.dm_file}")
-        copyFileToFolder("${params.dm_file}", "${params.paramdir}/")
     } else { exit 1, "ERROR: The 'dm_file' file does not exist" }
 
     // create channels from input files
     exp_table       = Channel.fromPath("${params.exp_table}", checkIfExists: true)
-    database        = Channel.fromPath("${params.database}", checkIfExists: true)
+    // database        = Channel.fromPath("${params.database}", checkIfExists: true)
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
-    groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
-
-    // copy input files into params directory
-    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
-    copyFileToFolder("${params.database}", "${params.paramdir}/")
-    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
-    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
+    // groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
+    // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
+    File file3 = new File("${params.database}")
+    if ( file3.exists() ) {
+        database = Channel.value("${params.database}")
+    } else { exit 1, "ERROR: The 'database' file does not exist" }
+    File file2 = new File("${params.groupmaker_file}")
+    if ( file2.exists() ) {
+        groupmaker_file = Channel.value("${params.groupmaker_file}")
+    } else { exit 1, "ERROR: The 'groupmaker_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
@@ -118,6 +129,13 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
     params_file = Channel.value("${updated_params_file}")
+
+    // copy input files into params directory
+    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
+    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.dm_file}", "${params.paramdir}/")
 
 
     emit:
@@ -147,15 +165,18 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_RECOM {
         fixed_method_params_file = params.fixed_comet_params_file
     }    
     exp_table       = Channel.fromPath("${params.exp_table}", checkIfExists: true)
-    database        = Channel.fromPath("${params.database}", checkIfExists: true)
+    // database        = Channel.fromPath("${params.database}", checkIfExists: true)
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
-    groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
-
-    // copy input files into params directory
-    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
-    copyFileToFolder("${params.database}", "${params.paramdir}/")
-    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
-    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
+    // groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
+    // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
+    File file = new File("${params.database}")
+    if ( file.exists() ) {
+        database = Channel.value("${params.database}")
+    } else { exit 1, "ERROR: The 'database' file does not exist" }
+    File file2 = new File("${params.groupmaker_file}")
+    if ( file2.exists() ) {
+        groupmaker_file = Channel.value("${params.groupmaker_file}")
+    } else { exit 1, "ERROR: The 'groupmaker_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
     def redefinedParams = ['decoyprefix': params.decoy_prefix, 'decoy_prefix': params.decoy_prefix]
@@ -169,6 +190,12 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_RECOM {
     // create channel for params file
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
     params_file = Channel.value("${updated_params_file}")
+
+    // copy input files into params directory
+    copyFileToFolder("${params.exp_table}", "${params.paramdir}/")
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
+    copyFileToFolder("${params.sitelist_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.groupmaker_file}", "${params.paramdir}/")
 
 
     emit:
