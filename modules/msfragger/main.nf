@@ -8,10 +8,10 @@ process MSF {
     val params_file
 
     output:
-    path("*.tsv", emit: ofile)
-    path("*.pin", optional: true)
-    path("*.pepXML", optional: true)
-    path("*.log", emit: log, optional: true)
+    path "*.tsv", emit: ofile
+    path "*.pin", optional: true
+    path "*.pepXML", optional: true
+    path "*.log", emit: log, optional: true
 
     script:
     // get the extension from the first input file. Should be equal in the channel collect.
