@@ -1,8 +1,6 @@
 process PDMTABLE_MAKER {
     tag "${order}"
-    label 'process_medium'
-
-    time '48.h'
+    label 'process_medium' , 'process_long_time'
 
     input:
     val  order
