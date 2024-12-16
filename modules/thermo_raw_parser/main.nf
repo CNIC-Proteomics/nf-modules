@@ -1,6 +1,6 @@
 process THERMO_RAW_PARSER {
     tag "${order}"
-    label 'process_high'
+    label 'process_single'
 
     input:
     val  order
