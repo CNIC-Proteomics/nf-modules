@@ -44,13 +44,15 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
     // groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
     peak_file       = file("${params.peak_file}", checkIfExists: true)
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
-    File file = new File("${params.database}")
-    if ( file.exists() ) {
-        database = Channel.value("${params.database}")
+    File file_db = new File("${params.database}")
+    if (!file_db.isAbsolute()) { file_db = file_db.getCanonicalFile() }
+    if ( file_db.exists() ) {
+        database = Channel.value(file_db.getAbsolutePath())
     } else { exit 1, "ERROR: The 'database' file does not exist" }
-    File file2 = new File("${params.groupmaker_file}")
-    if ( file2.exists() ) {
-        groupmaker_file = Channel.value("${params.groupmaker_file}")
+    File file_gm = new File("${params.groupmaker_file}")
+    if (!file_gm.isAbsolute()) { file_gm = file_gm.getCanonicalFile() }
+    if ( file_gm.exists() ) {
+        groupmaker_file = Channel.value(file_gm.getAbsolutePath())
     } else { exit 1, "ERROR: The 'groupmaker_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
@@ -97,9 +99,10 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     msf_raw_files = joinChannelsFromFilename(raw_files, msf_files)
 
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
-    File file = new File("${params.dm_file}")
-    if ( file.exists() ) {
-        dm_file = Channel.value("${params.dm_file}")
+    File file_dm = new File("${params.dm_file}")
+    if (!file_dm.isAbsolute()) { file_dm = file_dm.getCanonicalFile() }
+    if ( file_dm.exists() ) {
+        dm_file = Channel.value(file_dm.getAbsolutePath())
     } else { exit 1, "ERROR: The 'dm_file' file does not exist" }
 
     // create channels from input files
@@ -108,13 +111,15 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_REFMOD {
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
     // groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
-    File file3 = new File("${params.database}")
-    if ( file3.exists() ) {
-        database = Channel.value("${params.database}")
+    File file_db = new File("${params.database}")
+    if (!file_db.isAbsolute()) { file_db = file_db.getCanonicalFile() }
+    if ( file_db.exists() ) {
+        database = Channel.value(file_db.getAbsolutePath())
     } else { exit 1, "ERROR: The 'database' file does not exist" }
-    File file2 = new File("${params.groupmaker_file}")
-    if ( file2.exists() ) {
-        groupmaker_file = Channel.value("${params.groupmaker_file}")
+    File file_gm = new File("${params.groupmaker_file}")
+    if (!file_gm.isAbsolute()) { file_gm = file_gm.getCanonicalFile() }
+    if ( file_gm.exists() ) {
+        groupmaker_file = Channel.value(file_gm.getAbsolutePath())
     } else { exit 1, "ERROR: The 'groupmaker_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
@@ -169,13 +174,15 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS_RECOM {
     sitelist_file   = Channel.fromPath("${params.sitelist_file}", checkIfExists: true)
     // groupmaker_file = Channel.fromPath("${params.groupmaker_file}", checkIfExists: true)
     // these files will be used multiple times; So, we have to create a Value Channel and then, check if file exists
-    File file = new File("${params.database}")
-    if ( file.exists() ) {
-        database = Channel.value("${params.database}")
+    File file_db = new File("${params.database}")
+    if (!file_db.isAbsolute()) { file_db = file_db.getCanonicalFile() }
+    if ( file_db.exists() ) {
+        database = Channel.value(file_db.getAbsolutePath())
     } else { exit 1, "ERROR: The 'database' file does not exist" }
-    File file2 = new File("${params.groupmaker_file}")
-    if ( file2.exists() ) {
-        groupmaker_file = Channel.value("${params.groupmaker_file}")
+    File file_gm = new File("${params.groupmaker_file}")
+    if (!file_gm.isAbsolute()) { file_gm = file_gm.getCanonicalFile() }
+    if ( file_gm.exists() ) {
+        groupmaker_file = Channel.value(file_gm.getAbsolutePath())
     } else { exit 1, "ERROR: The 'groupmaker_file' file does not exist" }
 
     // update the given parameter into the fixed parameter file
