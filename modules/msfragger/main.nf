@@ -1,6 +1,7 @@
 process MSF {
     tag "${order}"
     label 'process_very_high'
+    label 'process_long_time'
 
     input:
     val order

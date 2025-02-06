@@ -1,6 +1,7 @@
 process THERMO_RAW_PARSER {
     tag "${order}"
     label 'process_single'
+    label 'error_ignore'
 
     input:
     val  order
