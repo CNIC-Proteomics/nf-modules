@@ -13,6 +13,7 @@ import org.yaml.snakeyaml.Yaml
 
 include {
     printErrorMissingParams;
+    copyFileToFolder;
     getAbsolutePath;
     updateParamsFile;
     writeStrIntoFile
@@ -29,7 +30,7 @@ workflow CREATE_INPUT_CHANNEL_SEARCH_ENGINE {
     main:
 
     // stop from the missing parameters
-    def requiredParams = ['raw_files','database','msf_params_file','reporter_ion_isotopic']
+    def requiredParams = ['raw_files','database','msf_params_file']
     printErrorMissingParams(params, requiredParams)
 
     // create channels from input files
@@ -46,14 +47,16 @@ workflow CREATE_INPUT_CHANNEL_SEARCH_ENGINE {
 
     // create channels from input files
     // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
-    def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
-    File file = new File(reporter_ion_isotopic_str)
-    if ( file.exists() ) {
-        reporter_ion_isotopic = Channel.value(reporter_ion_isotopic_str)
+    if ( params.containsKey('reporter_ion_isotopic') ) {
+        def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic = file("${reporter_ion_isotopic_str}", checkIfExists: true)
     }
     else {
-        exit 1, "ERROR: The 'reporter_ion_isotopic' file does not exist"
+        reporter_ion_isotopic = ""
     }
+
+    // copy input files into params directory
+    copyFileToFolder("${params.database}", "${params.paramdir}/")
 
     emit:
     ch_raws                   = raw_files
@@ -112,7 +115,7 @@ workflow CREATE_INPUT_CHANNEL_MSFRAGGERADAPTED {
     main:
 
     // stop from the missing parameters
-    def requiredParams = ['mz_files','msf_files','reporter_ion_isotopic']
+    def requiredParams = ['mz_files','msf_files']
     printErrorMissingParams(params, requiredParams)
 
     // create channels from input files
@@ -121,13 +124,12 @@ workflow CREATE_INPUT_CHANNEL_MSFRAGGERADAPTED {
 
     // create channels from input files
     // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
-    def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
-    File file = new File(reporter_ion_isotopic_str)
-    if ( file.exists() ) {
-        reporter_ion_isotopic = Channel.value(reporter_ion_isotopic_str)
+    if ( params.containsKey('reporter_ion_isotopic') ) {
+        def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic = file("${reporter_ion_isotopic_str}", checkIfExists: true)
     }
     else {
-        exit 1, "ERROR: The 'reporter_ion_isotopic' file does not exist"
+        reporter_ion_isotopic = ""
     }
 
     emit:
