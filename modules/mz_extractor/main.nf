@@ -7,6 +7,10 @@ process MZ_EXTRACTOR {
     tuple path(ident_file), path(mz_file)
     path ion_file
 
+    // when:
+    // // execute this process depending on the given flag
+    // ion_file.name != 'NO_FILE' ? true : false
+
     output:
     path "${ident_file.baseName}.tsv", emit: ofile
     path "*.log", emit: log

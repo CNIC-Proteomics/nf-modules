@@ -6,11 +6,6 @@ process THERMO_RAW_PARSER {
     input:
     val  order
     path input_file
-    val  create_mzml
-
-    when:
-    // execute this process depending on the given flag
-    create_mzml ? true : false
 
     output:
     // select the output prefix depending on the given format

@@ -46,13 +46,11 @@ workflow CREATE_INPUT_CHANNEL_SEARCH_ENGINE {
     msf_param_file = Channel.value("${updated_params_file}")
 
     // create channels from input files
-    // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
+    // this file will be used multiple times, so, it is why the variable changes to file
+    reporter_ion_isotopic = file("${params.NO_FILE}", checkIfExists: true)
     if ( params.containsKey('reporter_ion_isotopic') ) {
-        def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
         reporter_ion_isotopic = file("${reporter_ion_isotopic_str}", checkIfExists: true)
-    }
-    else {
-        reporter_ion_isotopic = ""
     }
 
     // copy input files into params directory
@@ -123,13 +121,11 @@ workflow CREATE_INPUT_CHANNEL_MSFRAGGERADAPTED {
     msf_files = Channel.fromPath("${params.msf_files}", checkIfExists: true)
 
     // create channels from input files
-    // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
+    // this file will be used multiple times, so, it is why the variable changes to file
+    reporter_ion_isotopic = file("${params.NO_FILE}", checkIfExists: true)
     if ( params.containsKey('reporter_ion_isotopic') ) {
-        def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
         reporter_ion_isotopic = file("${reporter_ion_isotopic_str}", checkIfExists: true)
-    }
-    else {
-        reporter_ion_isotopic = ""
     }
 
     emit:
@@ -146,11 +142,11 @@ workflow CREATE_INPUT_CHANNEL_MZEXTRACTOR {
     printErrorMissingParams(params, requiredParams)
 
     // create channels from input files
-    // this file will be used multiple times, so, we have to create a Value Channel and then, check if file exists
-    def reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
-    File file = new File(reporter_ion_isotopic_str)
-    if ( file.exists() ) {
-        reporter_ion_isotopic = Channel.value(reporter_ion_isotopic_str)
+    // this file will be used multiple times, so, it is why the variable changes to file
+    reporter_ion_isotopic = file("${params.NO_FILE}", checkIfExists: true)
+    if ( params.containsKey('reporter_ion_isotopic') ) {
+        reporter_ion_isotopic_str = getAbsolutePath("${params.reporter_ion_isotopic}")
+        reporter_ion_isotopic = file("${reporter_ion_isotopic_str}", checkIfExists: true)
     }
     else {
         exit 1, "ERROR: The 'reporter_ion_isotopic' file does not exist"
