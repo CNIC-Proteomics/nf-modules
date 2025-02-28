@@ -15,6 +15,8 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import org.yaml.snakeyaml.Yaml
+
 
 /*
 ========================================================================================
@@ -287,6 +289,10 @@ def writeStrIntoFile(content, ifile) {
 }
 
 
+
+/* -------------------- METHODS FOR INI FILES -------------------- */
+
+
 /**
  * Creates a string in INI format from a report map of sections and key-value pairs.
  *
@@ -516,6 +522,125 @@ def updateParams(params, params_file) {
     return updated_params_file
 }
 
+
+
+/* -------------------- METHODS FOR YAML FILES -------------------- */
+
+
+/**
+ * Extracts specified sections from a YAML file and returns them as a string.
+ *
+ * @param ifile - Path to the YAML file
+ * @param sections - List of sections to extract
+ * @return A string representing the extracted sections in YAML format
+ */
+def extractYamlSections(ifile, sections) {
+    def yaml = new Yaml()
+    def yamlFile = (ifile instanceof Path) ? ifile.toFile() : ifile // ensure we handle both Path and File objects
+    def yamlData = yaml.load(yamlFile.newInputStream())
+
+    def extractedData = [:]
+    sections.each { section ->
+        if (yamlData.containsKey(section)) {
+            extractedData[section] = yamlData[section]
+        } else {
+            throw new Exception("Key '${section}' is not in the YAML file.")
+        }
+    }
+
+    return new Yaml().dump(extractedData)
+}
+
+
+/**
+ * Generates an updated parameter string by extracting specific sections and applying replacements.
+ *
+ * @param ifile - Path to the input YAML file
+ * @param sections - List of sections to extract and update
+ * @param replacements - List of tuples (regex, replacement) for dynamic replacements (optional)
+ * @return A string containing the updated parameters in YAML format
+ */
+def generateUpdatedYamlStr(ifile, sections, replacements = []) {
+    def yamlStr = ''
+    try {
+        yamlStr = extractYamlSections(ifile, sections)
+
+        replacements.each { replacement ->
+            yamlStr = yamlStr.replaceAll(replacement[0], replacement[1])
+        }
+    } catch (Exception ex) {
+        println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
+        System.exit(1)
+    }
+    return yamlStr
+}
+
+
+/**
+ * Generates a YAML parameter string channel based on the given sections and replacements.
+ *
+ * @param paramsFile - Channel representing the YAML file path
+ * @param sections - List of sections to extract from the YAML file
+ * @param replacements - List of tuples (regex, replacement) for dynamic replacements (optional)
+ * @return A channel emitting the updated YAML string
+ */
+def createYamlParamStrChannel(paramsFile, sections, replacements = []) {
+    return paramsFile.map { file ->
+        generateUpdatedYamlStr(file, sections, replacements)
+    }
+}
+
+
+/**
+ * Recursive merging of two maps (deep merge).
+ * @param target - The target map (to be updated).
+ * @param source - The source map (overrides).
+ */
+def mergeMaps(target, source) {
+    source.each { key, value ->
+        // preserve target value if source value is null
+        if (value == null) { return }
+        // recursive merge for nested maps
+        if (value instanceof Map && target[key] instanceof Map) {
+            mergeMaps(target[key], value)
+        // Override target with source value
+        } else {            
+            target[key] = value
+        }
+    }
+}
+
+
+/**
+ * Merges parameters from the source YAML into the target YAML.
+ * @param sourceYaml - The source YAML file (overrides).
+ * @param targetYaml - The target YAML file (to be updated).
+ * @return Merged YAML content as a string.
+ */
+def mergeYmlFiles(ifile1, ifile2) {
+    // declare variable
+    def params_str = ''
+    try {
+        // read input files
+        File targetFile = new File(ifile1)
+        File sourceFile = new File(ifile2)
+
+        // parse YAML content to maps
+        Yaml yaml = new Yaml()
+        Map targetData = yaml.load(targetFile.newInputStream())
+        Map sourceData = yaml.load(sourceFile.newInputStream())
+        
+        // merge maps
+        mergeMaps(targetData, sourceData)
+
+        // convert merged map to YAML string
+        params_str = new Yaml().dump(targetData)
+    } catch(Exception ex) {
+        println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
+        System.exit(1)
+    }
+    return params_str
+}
 
 
 // //
