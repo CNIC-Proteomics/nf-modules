@@ -178,13 +178,13 @@ def joinChannelsFromFilename(ifiles1, ifiles2) {
     def files1 = ifiles1
                     // .flatten()
                     .map{  file -> tuple(file.baseName, file) }
-                    // .view()
+                    // .view { "value_ifile1: $it" }
                     // .set { files1 }
 
     // create a list of tuples with the base name and the file name.
     def files2 = ifiles2
                     .map { file -> tuple(file.baseName, file) }
-                    // .view()
+                    // .view { "value_ifile2: $it" }
                     // .set { files2 }
 
     // join both channels based on the first element (base name)

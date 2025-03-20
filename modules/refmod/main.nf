@@ -1,45 +1,24 @@
-// process REF_MOD {
-//     tag "${order}"
-//     label 'process_high'
-
-//     input:
-//     val order
-//     tuple path(raw_files), path(msf_files)
-//     path dm_file
-//     path params_file
-
-//     output:
-//     path "${raw_files.baseName}_REFMOD.tsv", emit: ofile
-//     path "*.log", emit: log
-
-//     script:
-//     // define files
-//     def log_file ="${msf_files.baseName}.log"
-
-//     """
-//     source ${REFMOD_HOME}/env/bin/activate && python ${REFMOD_HOME}/ReFrag.py -w "${task.cpus}" -i "${msf_files}" -r "${raw_files}" -d "${dm_file}" -c "${params_file}"
-//     """
-// }
-
 process REF_MOD {
     tag "${order}"
-    label 'process_high'
+    label 'process_single'
 
     input:
     val order
-    tuple path(raw_files), path(msf_files)
+    tuple path(ident_file), path(mz_file)
     path dm_file
     path params_file
 
     output:
-    path "${msf_files.baseName}_pos.tsv", emit: ofile
+    path "${ident_file.baseName}.tsv", emit: ofile
+    path "${mz_file.baseName}_SUMMARY.tsv", emit: summary_file
     path "*.log", emit: log
 
     script:
     // define files
-    def log_file ="${msf_files.baseName}.log"
+    def log_file ="${ident_file.baseName}.log"
 
     """
-    source ${REFMOD_HOME}/env/bin/activate && python ${REFMOD_HOME}/msf_adaptor.py -i "${msf_files}" > "${log_file}" 2>&1
+    source ${REFMOD_HOME}/env/bin/activate && python ${REFMOD_HOME}/ReFrag.py -w "${task.cpus}" -i "${ident_file}" -r "${mz_file}" -d "${dm_file}" -c "${params_file}" -o "output" > "${log_file}" 2>&1
+    mv output/* .
     """
 }
