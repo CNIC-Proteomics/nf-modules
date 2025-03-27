@@ -18,7 +18,7 @@ process QREPORT_MAKER {
     def optional_params = qmeta_file.name != 'NO_FILE' ? "-q \"${qmeta_file}\"" : ''    
 
     """
-    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/5_qTableReport/qReportMaker.py  -i "${input_file}" -c "${params_file}" -p "${map_dir}" ${optional_params} -o "qReports" 2>&1
+    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/6_qTableReport/qReportMaker.py  -i "${input_file}" -c "${params_file}" -p "${map_dir}" ${optional_params} -o "." 2>&1
     mv qReports/*.log .
     """
 }

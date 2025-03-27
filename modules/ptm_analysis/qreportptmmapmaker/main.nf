@@ -26,9 +26,9 @@ process QREPORT_PTMMAP_MAKER {
     # create the new parameter file
     echo "${params_str}" > "${params_file}"
     
-    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/4_PTMMap/PTMMap.py  -i "${input_file}" -c "${params_file}" -o "." 2>&1
+    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/5_PTMMap/PTMMap.py  -i "${input_file}" -c "${params_file}" -o "." 2>&1
 
-    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/5_qTableReport/qReportMaker.py  -i "${input_file}" -c "${params_file}" -p "." ${optional_params} -o "." 2>&1
+    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/6_qTableReport/qReportMaker.py  -i "${input_file}" -c "${params_file}" -p "." ${optional_params} -o "." 2>&1
     """
 }
 

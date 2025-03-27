@@ -13,7 +13,7 @@ process PTM_MAP {
 
     script:
     """
-    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/4_PTMMap/PTMMap.py  -i "${input_file}" -c "${params_file}" -o "PTMMaps" 2>&1
+    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/5_PTMMap/PTMMap.py  -i "${input_file}" -c "${params_file}" -o "." 2>&1
     mv PTMMaps/*.log .
     """
 }
