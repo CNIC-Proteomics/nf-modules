@@ -10,7 +10,7 @@ process QREPORT_PTMMAP_MAKER {
 
     output:
     path "PTMmaps", emit: PTMmaps
-    path "PTMmaps_FDR", emit: PTMmaps_FDR
+    path "PTMmaps_filtered", emit: PTMmaps_filtered
     path "qReports", emit: qReports
     path "FreqTables", emit: FreqTables
     path "*.log", emit: log, optional: true
