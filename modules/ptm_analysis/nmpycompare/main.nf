@@ -23,7 +23,7 @@ process NM_PY_COMPARE {
     # create the new parameter file
     echo "${params_str}" > "${params_file}"
     
-    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/1_NMpyCompare/NMpyCompare.py  -i "${input_file}" -c "${params_file}" -o "${output_file}" 2>&1
+    source ${REPORTANALYSIS_HOME}/env/bin/activate && python ${REPORTANALYSIS_HOME}/2_NMpyCompare/NMpyCompare.py  -i "${input_file}" -c "${params_file}" -o "${output_file}" 2>&1
     """
 }
 

@@ -24,7 +24,7 @@ process LIMMA_COMPARE {
     # create the new parameter file
     echo "${params_str}" > "${params_file}"
     
-    Rscript --vanilla ${REPORTANALYSIS_HOME}/2_ReportLimma_wo_GUI/app_wo_GUI.R  -i "${input_file}" -c "${params_file}" -s "${compa_file}" -o "${output_file}" 2>&1
+    Rscript --vanilla ${REPORTANALYSIS_HOME}/3_ReportLimma_wo_GUI/app_wo_GUI.R  -i "${input_file}" -c "${params_file}" -s "${compa_file}" -o "${output_file}" 2>&1
     """
 }
 
