@@ -29,12 +29,12 @@ workflow CREATE_INPUT_CHANNEL_PTM_ANALYSIS {
     main:
 
     // stop from the missing parameters
-    def requiredParams = ['quant_file','pdm_file','params_file','compa_file']
+    def requiredParams = ['quant_file','pgm_file','params_file','compa_file']
     printErrorMissingParams(params, requiredParams)
 
     // create channels from input files
     quant_file = Channel.fromPath("${params.quant_file}", checkIfExists: true)
-    pdm_file = Channel.fromPath("${params.pdm_file}", checkIfExists: true)
+    pgm_file = Channel.fromPath("${params.pgm_file}", checkIfExists: true)
     compa_file = Channel.fromPath("${params.compa_file}", checkIfExists: true)
 
     // merge the files that contain both the fixed parametes and the variable parameters
@@ -54,12 +54,12 @@ workflow CREATE_INPUT_CHANNEL_PTM_ANALYSIS {
 
     // copy input files into params directory
     copyFileToFolder("${params.quant_file}", "${params.paramdir}/")
-    copyFileToFolder("${params.pdm_file}", "${params.paramdir}/")
+    copyFileToFolder("${params.pgm_file}", "${params.paramdir}/")
     copyFileToFolder("${params.compa_file}", "${params.paramdir}/")
 
     emit:
     ch_quant_file         = quant_file
-    ch_pdm_file           = pdm_file
+    ch_pgm_file           = pgm_file
     ch_params_file        = params_file
     ch_compa_file         = compa_file
     ch_qmeta_file         = qmeta_file

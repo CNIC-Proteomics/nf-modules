@@ -1,4 +1,4 @@
-process PDMTABLE_MAKER {
+process PGMTABLE_MAKER {
     tag "${order}"
     label 'process_medium' , 'process_long_time'
 
