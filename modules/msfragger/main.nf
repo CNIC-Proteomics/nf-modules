@@ -10,10 +10,10 @@ process MSF {
 
     output:
     path "*.tsv", emit: ofile
-    path "*.log", emit: log
     path "*.pin", optional: true
     path "*.pepXML", optional: true
-
+    path "*.log", emit: log, optional: true
+    
     script:
     // get the extension from the first input file. Should be equal in the channel collect.
     def prefix = input_files.first().getExtension()
