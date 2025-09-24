@@ -267,6 +267,35 @@ def copyFileToFolder(sourcePath, destinationFolderPath) {
 
 
 /**
+ * Reads the content of a file and returns it as a string.
+ *
+ * @param ifile - The path to the input file
+ * @return The file content as a string
+ */
+def _readFileAsString(ifile) {
+    def content = ''
+    try {
+        def f = new File(ifile)
+        content = f.text
+    } catch(Exception ex) {
+        println("ERROR: ${new Object(){}.getClass().getEnclosingMethod().getName()}: $ex.")
+        System.exit(1)
+    }
+    return content
+}
+/**
+ * Unwrap channel and read file content
+ *
+ * @param ifile - Channel representing the parameter file path
+ */
+def readFileAsString(ifile) {
+    return ifile.map { file ->
+        _readFileAsString(file)
+    }
+}
+
+
+/**
  * Writes the given content into a specified file.
  *
  * @param content - The string content to write to the file
