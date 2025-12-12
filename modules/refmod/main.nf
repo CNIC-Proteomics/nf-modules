@@ -18,7 +18,7 @@ process REF_MOD {
     def log_file ="${ident_file.baseName}.log"
 
     """
-    source ${REFMOD_HOME}/env/bin/activate && python ${REFMOD_HOME}/ReFrag.py -w "${task.cpus}" -i "${ident_file}" -r "${mz_file}" -d "${dm_file}" -c "${params_file}" -o "output" > "${log_file}" 2>&1
+    source ${REFMOD_HOME}/env/bin/activate && python ${REFMOD_HOME}/src/RefMod.py -w "${task.cpus}" -i "${ident_file}" -r "${mz_file}" -d "${dm_file}" -c "${params_file}" -o "output" > "${log_file}" 2>&1
     mv output/* .
     """
 }
