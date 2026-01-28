@@ -31,7 +31,7 @@ workflow CREATE_INPUT_CHANNEL_PTMCOMPASS {
 
     // get the fixed parameter file based on the type of input
     def fixed_input_params_file = (
-        params.containsKey('search_engine') && params.search_engine == 'refmod'
+        params.containsKey('is_refmod_input') && params.is_refmod_input
             ? params.fixed_msfragger_refmod_params_file
             : params.fixed_msfragger_params_file
     )
